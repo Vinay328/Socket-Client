@@ -1,13 +1,27 @@
-// query dom
-
+//Get html elements by unique id
 const message = document.getElementById('message');
 const sendMessageButton = document.getElementById('send-message');
 const writeContent = document.getElementById('write-content');
 const submitBtn = document.getElementById('username-submit');
 const overlay = document.getElementById('overlay');
 
-let userName;
+let userName = "Anonymous";
 
+//Write the message content to html and emit the data through sockets
+function addDataAndEmitMessage(data) {
+
+    writeContent.innerHTML += "<p><strong>" + data.userName + ':</strong>' + data.message + '</p>';
+
+    //Electron specific code
+    if (!data.userName) {
+        data.userName = userName;
+    }
+
+    emitMessage(data);
+
+}
+
+//Capture user name and assign it to user name variable
 submitBtn.addEventListener('click', function (event) {
 
     event.preventDefault();
@@ -34,8 +48,7 @@ sendMessageButton.addEventListener('click', function (event) {
         };
 
         message.value = "".trim();
-        writeContent.innerHTML += "<p><strong>" + data.userName + ':</strong>' + data.message + '</p>';
-        emitMessage(data);
+        addDataAndEmitMessage(data);
 
     } else {
         alert("please enter your message");
@@ -45,6 +58,18 @@ sendMessageButton.addEventListener('click', function (event) {
 
 
 //listen for events
-socket.on('chat', function (data) {
+socket.on('chat', (data) => {
+
+    //Electron specific code;
+    if (!data.userName) {
+        data.userName = "Anonymous";
+    }
+
     writeContent.innerHTML += "<p><strong>" + data.userName + ':</strong>' + data.message + '</p>';
+
+    //Electron specific code
+    if (window.alphaDemo) {
+        window.alphaDemo.showNotificationToUser(data, addDataAndEmitMessage);
+    }
+
 });
