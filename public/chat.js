@@ -10,12 +10,12 @@ let userName = "Anonymous";
 //Write the message content to html and emit the data through sockets
 function addDataAndEmitMessage(data) {
 
-    writeContent.innerHTML += "<p><strong>" + data.userName + ':</strong>' + data.message + '</p>';
-
     //Electron specific code
     if (!data.userName) {
         data.userName = userName;
     }
+
+    writeContent.innerHTML += "<p><strong>" + data.userName + ':</strong>' + data.message + '</p>';
 
     emitMessage(data);
 
@@ -59,11 +59,6 @@ sendMessageButton.addEventListener('click', function (event) {
 
 //listen for events
 socket.on('chat', (data) => {
-
-    //Electron specific code;
-    if (!data.userName) {
-        data.userName = "Anonymous";
-    }
 
     writeContent.innerHTML += "<p><strong>" + data.userName + ':</strong>' + data.message + '</p>';
 
