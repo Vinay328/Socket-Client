@@ -33,6 +33,7 @@ sendMessageButton.addEventListener('click', function (event) {
             userName: userName
         };
 
+        message.value = "".trim();
         writeContent.innerHTML += "<p><strong>" + data.userName + ':</strong>' + data.message + '</p>';
         emitMessage(data);
 
